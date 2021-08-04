@@ -1,0 +1,75 @@
+# oracle 归档模式学习
+## 1. 查看归档是否开启
+
+## 2. 修改静态参数
+ORACLE RAC数据库修改静态参数，不能使用轮流启动的方式，<font color=#A52A2A size=4 >必须把两个节点的实例全部停掉</font>，然后再启动实例。否则会提示数据库参数不兼容，实例将无法启动。
+
+## 3. 日常维护命令
+
+1）ocrcheck(在grid的bin里面)
+
+
+OCR简介：
+OCR相当于Windows的注册表。对于Windows而言，所有的软件信息，用户，配置，安全等等统统都放到注册表里边。而集群呢，同样如此，所有和集群相关的资源，配置，节点，RAC数据库统统都放在这个仓库里。
+
+为ocr增加镜像(权限需注意):
+ocrconfig -add +data2
+
+
+删除镜像:
+ocrconfig -delete +data2
+
+备份ocr文件（当集群架构调整时候可做，用于恢复使用:
+ocrconfig -manualbackup
+
+显示ocr备份文件:
+ocrconfig -showbackup
+
+
+2）crsctl
+
+检查仲裁磁盘:
+crsctl query css votedisk
+
+设置开机自动启动rac:
+crsctl enable crs
+
+设置开机不自动启动rac:
+crsctl disable crs
+
+3) srvctl
+
+特别解释一下crsctl和srvctl的区别：
+&nbsp;&nbsp; Difference between Using SRVCTL and CRSCTL
+Use SRVCTL to manage Oracle-supplied resources such as listener, instances, disk groups, and networks, and CRSCTL for managing Oracle Clusterware and its resources.
+
+查看数据库名:
+srvctl config database
+
+
+检查集群状态:
+srvctl status database -db database_name -i instance_name
+
+
+4) asmcmd
+
+查看diskgroup:
+asmcmd lsdg
+
+asm和系统互相copy文件:
+asm模式下执行:
+cp filename /home/tmp/  或者 cp /home/tmp/filename .
+
+监听配置查看:
+srvctl config listener -a
+
+
+scan查看:
+srvctl status scan
+srcvctl config scan -a
+
+
+5) orapwd
+
+创建密码文件:
+orapwd file='+data/itpuxdb/password/orapwitpuxdb', dbuniquename='itpuxdb', format=12.2

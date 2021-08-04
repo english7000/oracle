@@ -1,0 +1,53 @@
+# DG学习
+
+## 1. DG原理 ##
+
+## 2. DG配置
+2） 首先确认oracle开启归档模式
+
+```sql
+SQL> archive log list;
+Database log mode	       No Archive Mode     // 这里表示没有开启archive
+Automatic archival	       Disabled
+Archive destination	       USE_DB_RECOVERY_FILE_DEST
+Oldest online log sequence     7
+Current log sequence	       8
+```
+```SQL
+
+SQL> show parameter recovery
+
+NAME				                TYPE	     VALUE
+------------------------------------ ----------- ------------------------------
+db_recovery_file_dest		     string	 +DATA
+db_recovery_file_dest_size	     big integer 8931M
+recovery_parallelism		     integer	 0
+remote_recovery_file_dest	     string
+```
+
+
+
+
+3） 开启archive
+先把格式调一下好看点
+```
+SQL> col owner for a20;
+SQL> col object_name for a40;
+SQL> set linesize 999
+SQL> select * from v$log;
+
+    GROUP#    THREAD#  SEQUENCE#      BYTES  BLOCKSIZE	  MEMBERS ARC STATUS	       FIRST_CHANGE# FIRST_TIM NEXT_CHANGE# NEXT_TIME	  CON_ID
+---------- ---------- ---------- ---------- ---------- ---------- --- ---------------- ------------- --------- ------------ --------- ----------
+	 1	    2	       3  209715200	   512		2 NO  INACTIVE		     2433798 19-MAY-21	    2630723 30-JUL-21	       0
+	 2	    2	       4  209715200	   512		2 NO  CURRENT		     2630723 30-JUL-21	 1.8447E+19		       0
+	 3	    1	       7  209715200	   512		2 NO  INACTIVE		     2333669 18-MAY-21	    2652375 30-JUL-21	       0
+	 4	    1	       8  209715200	   512		2 NO  CURRENT		     2652375 30-JUL-21	 1.8447E+19		       0
+```
+
+关闭ora2节点:
+
+设置归档参数: size为2g
+
+
+设置归档文件大小：
+```SQL
